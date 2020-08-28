@@ -25,6 +25,7 @@ spec:
     spec:
       containers:
       - image: adess/tito-db
+        imagePullPolicy: Always
         name: mysql
         env:
           # Use secret in real usage
