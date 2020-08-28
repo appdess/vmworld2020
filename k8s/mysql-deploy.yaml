@@ -15,7 +15,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      tito: tito
+      app: tito
   strategy:
     type: Recreate
   template:
