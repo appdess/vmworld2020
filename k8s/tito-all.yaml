@@ -1,0 +1,148 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql-pv-volume
+  labels:
+    type: local
+spec:
+  storageClassName: default
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pv-claim
+spec:
+  storageClassName: default
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20GiapiVersion: v1
+kind: Service
+metadata:
+  name: tito-sql
+spec:
+  ports:
+  - port: 3306
+  selector:
+    app: tito
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use titos/v1beta2
+kind: Deployment
+metadata:
+  name: mysql
+spec:
+  selector:
+    matchLabels:
+      app: tito
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: tito
+    spec:
+      containers:
+      - image: adess/tito-db
+        imagePullPolicy: Always
+        name: mysql
+        env:
+          # Use secret in real usage
+        - name: MYSQL_ROOT_PASSWORD
+          value: VMware1!
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pv-claimapiVersion: v1
+kind: Secret
+metadata:
+  name: mysql-pass
+  labels:
+    app: tito
+  type: Opaque
+  data:
+  password: Vk13YXJlMSE=
+  # Password created like this: echo -n 'VMware1!' | base64
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: titofe
+  labels:
+    name: tito-fe
+    version: "latest"
+    app: tito
+    tier: frontend
+    stage: prod
+    namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      type: tito-fe
+      version: v1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: tito
+        type: tito-fe
+        version: v1
+        tier: frontend
+    spec:
+      containers:
+        - name: tito
+          image: adess/vmc-demo-k8s
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 80
+          env:
+          - name: TITO_VERSION
+            value: V2
+          - name: TITO_SQL_SERVICE_SERVICE_HOST # The IP of the Database VM which was setup - look in app code form-result.php for getenv funciton
+            value: tito-sql # titodb.c9mpcxbeqhcq.eu-central-1.rds.amazonaws.com for RDS
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: titofe-service
+  labels:
+    app: tito
+    tier: frontend
+    stage: prod
+    namespace: default
+spec:
+  type: LoadBalancer
+  ports:
+    # By default and for convenience, the `targetPort` is set to the same value as the `port` field.
+  - port: 80
+    targetPort: 80
+    # Optional field
+    # By default and for convenience, the Kubernetes control plane will allocate a port from a range (default: 30000-32767)
+    nodePort: 30007  
+  selector:                
+    type: tito-fe
+    tier: frontend
