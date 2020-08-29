@@ -7,7 +7,6 @@ spec:
   - port: 3306
   selector:
     app: tito
-    clusterIP: None
 ---
 apiVersion: apps/v1 # for versions before 1.9.0 use titos/v1beta2
 kind: Deployment
@@ -25,7 +24,7 @@ spec:
         app: tito
     spec:
       containers:
-      - image: adess/tito-db:v2
+      - image: adess/tito-db
         imagePullPolicy: Always
         name: mysql
         env:
