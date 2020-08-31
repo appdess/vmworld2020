@@ -64,7 +64,7 @@ spec:
       spec:
         initContainers:
         - name: init-mysql
-          image: adess/tito-db
+          image: mysql:5.7
           command:
           - bash
           - "-c"
@@ -112,12 +112,10 @@ spec:
             mountPath: /etc/mysql/conf.d
         containers:
         - name: mysql
-          image: adess/tito-db
+          image: mysql:5.7
           env:
           - name: MYSQL_ALLOW_EMPTY_PASSWORD
             value: "1"
-          - name: MYSQL_ROOT_PASSWORD
-            value: VMware1!
           ports:
           - name: mysql
             containerPort: 3306
@@ -181,7 +179,7 @@ spec:
                     -e "$(<change_master_to.sql.in), \
                             MASTER_HOST='mysql-0.mysql', \
                             MASTER_USER='root', \
-                            MASTER_PASSWORD='VMware1!', \
+                            MASTER_PASSWORD='', \
                             MASTER_CONNECT_RETRY=10; \
                           START SLAVE;" || exit 1
               # In case of container restart, attempt this at-most-once.
@@ -190,7 +188,7 @@ spec:
   
             # Start a server to send backups when requested by peers.
             exec ncat --listen --keep-open --send-only --max-conns=1 3307 -c \
-              "xtrabackup --backup --slave-info --stream=xbstream --host=127.0.0.1 --user=root --password=VMware1!"
+              "xtrabackup --backup --slave-info --stream=xbstream --host=127.0.0.1 --user=root"
           volumeMounts:
           - name: data
             mountPath: /var/lib/mysql
@@ -226,7 +224,7 @@ metadata:
     app: tito
   type: Opaque
   data:
-  password: Vk13YXJlMSE=
+  password:
   # Password created like this: echo -n 'VMware1!' | base64
 
 
