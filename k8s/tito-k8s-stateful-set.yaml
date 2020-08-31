@@ -114,6 +114,8 @@ spec:
         - name: mysql
           image: adess/tito-db
           env:
+          - name: MYSQL_ALLOW_EMPTY_PASSWORD
+            value: "1"
           - name: MYSQL_ROOT_PASSWORD
             value: VMware1!
           ports:
