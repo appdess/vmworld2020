@@ -223,6 +223,7 @@ spec:
     - metadata:
         name: data
       spec:
+        storageClassName: default
         accessModes: ["ReadWriteOnce"]
         resources:
           requests:
