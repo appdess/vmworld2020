@@ -212,7 +212,6 @@ spec:
         resources:
           requests:
             storage: 10Gi
-            storageClassName: default
 ---
 # deployment of the Tito-App
 apiVersion: v1
