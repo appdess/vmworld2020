@@ -68,7 +68,7 @@ metadata:
     stage: prod
     namespace: default
 spec:
-  type: LoadBalancer
+  type: NodePort
   ports:
     # By default and for convenience, the `targetPort` is set to the same value as the `port` field.
   - port: 80
