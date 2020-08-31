@@ -122,7 +122,7 @@ spec:
           - name: TITO_VERSION
             value: V2
           - name: TITO_SQL_SERVICE_SERVICE_HOST # The IP of the Database VM which was setup - look in app code form-result.php for getenv funciton
-            value: mysql # titodb.c9mpcxbeqhcq.eu-central-1.rds.amazonaws.com for RDS
+            value: mysql # internal service resolved via K8s DNS!
           - name: POD_NAME
             valueFrom:
               fieldRef:
