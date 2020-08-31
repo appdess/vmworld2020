@@ -1,36 +1,36 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: tito-sql
+  name: mysql
 spec:
   ports:
   - port: 3306
   selector:
-    app: tito
+    app: mysql
+  clusterIP: None
 ---
-apiVersion: apps/v1 # for versions before 1.9.0 use titos/v1beta2
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
   name: mysql
 spec:
   selector:
     matchLabels:
-      app: tito
+      app: mysql
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: tito
+        app: mysql
     spec:
       containers:
-      - image: adess/tito-db:v2
-        imagePullPolicy: Always
+      - image: adess/tito-db
         name: mysql
         env:
           # Use secret in real usage
         - name: MYSQL_ROOT_PASSWORD
-          value: VMware1!
+          value: password
         ports:
         - containerPort: 3306
           name: mysql
