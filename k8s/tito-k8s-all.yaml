@@ -1,3 +1,4 @@
+# Presistent Volume for our mysql Database
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -13,6 +14,7 @@ spec:
   hostPath:
     path: "/mnt/data"
 ---
+# Persistent volume Claim for our mysql Database
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -36,6 +38,7 @@ spec:
     app: mysql
   clusterIP: None
 ---
+# Mysql deployment of our DB - we use a single instance and point DNS directly to the POD!
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
@@ -68,4 +71,86 @@ spec:
       - name: mysql-persistent-storage
         persistentVolumeClaim:
           claimName: mysql-pv-claim
-          
+---
+# deployment of the Tito-App
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysql-pass
+  labels:
+    app: tito
+  type: Opaque
+  data:
+  password: Vk13YXJlMSE=
+  # Password created like this: echo -n 'VMware1!' | base64
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: titofe
+  labels:
+    name: tito-fe
+    version: "latest"
+    app: tito
+    tier: frontend
+    stage: prod
+    namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      type: tito-fe
+      version: v1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: tito
+        type: tito-fe
+        version: v1
+        tier: frontend
+    spec:
+      containers:
+        - name: tito
+          image: adess/vmc-demo-k8s
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 80
+          env:
+          - name: TITO_VERSION
+            value: V2
+          - name: TITO_SQL_SERVICE_SERVICE_HOST # The IP of the Database VM which was setup - look in app code form-result.php for getenv funciton
+            value: mysql # titodb.c9mpcxbeqhcq.eu-central-1.rds.amazonaws.com for RDS
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: titofe-service
+  labels:
+    app: tito
+    tier: frontend
+    stage: prod
+    namespace: default
+spec:
+  type: NodePort
+  ports:
+    # By default and for convenience, the `targetPort` is set to the same value as the `port` field.
+  - port: 80
+    targetPort: 80
+    # Optional field
+    # By default and for convenience, the Kubernetes control plane will allocate a port from a range (default: 30000-32767)
+    nodePort: 30007  
+  selector:                
+    type: tito-fe
+    tier: frontend
