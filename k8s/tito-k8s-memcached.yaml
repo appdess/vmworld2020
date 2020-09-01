@@ -55,7 +55,7 @@ spec:
         app: mysql
     spec:
       containers:
-      - image: adess/tito-db
+      - image: adess/tito-db:v10
         name: mysql
         env:
           # Use secret in real usage
