@@ -55,7 +55,7 @@ spec:
         app: mysql
     spec:
       containers:
-      - image: adess/tito-db:v10
+      - image: adess/tito-db
         name: mysql
         env:
           # Use secret in real usage
@@ -114,7 +114,7 @@ spec:
     spec:
       containers:
         - name: tito
-          image: adess/vmc-demo-k8s
+          image: adess/vmc-demo-k8s:v10
           imagePullPolicy: Always
           ports:
           - containerPort: 80
