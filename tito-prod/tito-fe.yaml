@@ -23,13 +23,13 @@ metadata:
     stage: prod
     namespace: default
 spec:
-  replicas: 10
+  replicas: 1
   selector:
     matchLabels:
       type: tito-fe
       version: v1
   strategy:
-    type: Recreate
+    type: Rolling
   template:
     metadata:
       labels:
