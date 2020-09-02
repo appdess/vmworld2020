@@ -29,7 +29,7 @@ spec:
       type: tito-fe
       version: v1
   strategy:
-    type: Rolling
+    type: RollingUpdate
   template:
     metadata:
       labels:
