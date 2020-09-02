@@ -23,7 +23,7 @@ metadata:
     stage: prod
     namespace: default
 spec:
-  replicas: 2
+  replicas: 10
   selector:
     matchLabels:
       type: tito-fe
@@ -40,7 +40,7 @@ spec:
     spec:
       containers:
         - name: tito
-          image: adess/vmc-demo-k8s
+          image: adess/vmc-demo-k8s:v10
           imagePullPolicy: Always
           ports:
           - containerPort: 80
