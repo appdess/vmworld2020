@@ -74,6 +74,8 @@ metadata:
     namespace: default
 spec:
   type: LoadBalancer
+  ingress:
+    - ip: 172.30.124.26
   ports:
     # By default and for convenience, the `targetPort` is set to the same value as the `port` field.
   - port: 80
