@@ -1,6 +1,3 @@
-# Created by Vincent Meoc
-# Create the Tito Front End container
-# docker run -d -P -e "TITO_VERSION=V2.3" -e "PROXY_NAME=wavefrontProxyFQDN" -e "PROXY_PORT=2878"   TITO:TAG
 
 FROM php:7.3.6-apache-stretch
 
