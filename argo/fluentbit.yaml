@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: fluent
+spec:
+  destination:
+    name: ''
+    namespace: logs
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: ''
+    repoURL: 'https://fluent.github.io/helm-charts'
+    targetRevision: 0.6.3
+    chart: fluent-bit
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
