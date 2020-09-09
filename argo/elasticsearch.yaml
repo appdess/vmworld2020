@@ -13,11 +13,11 @@ source:
       - name: resources.requests.memory
         value: 512M
       - name: resources.limits.memory
-        value: 1Gi
+        value: 2Gi
       - name: volumeClaimTemplate.storageClassName
         value: default
       - name: volumeClaimTemplate.resources.requests.storage
-        value: 40Gi
+        value: 50Gi
   chart: elasticsearch
 destination:
   server: 'https://kubernetes.default.svc'
