@@ -11,11 +11,11 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/data"
+      path: "/mnt/data"
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
-metadata:
+  metadata:
   name: mysql-pv-claim
 spec:
   storageClassName: default
