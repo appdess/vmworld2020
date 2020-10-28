@@ -23,7 +23,7 @@ metadata:
     stage: prod
     namespace: default
 spec:
-  replicas: 2
+  replicas: 4
   selector:
     matchLabels:
       type: tito-fe
